@@ -3,7 +3,9 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime"
 
+	"github.com/dundee/disk_usage_exporter/build"
 	exporter "github.com/dundee/disk_usage_exporter/exporter"
 	"github.com/spf13/cobra"
 
@@ -21,6 +23,8 @@ var rootCmd = &cobra.Command{
 	Long: `Prometheus exporter analysing disk usage of the filesystem
 and reporting which directories consume what space.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		printHeader()
+
 		go exporter.RunAnalysis(
 			viper.GetString("analyzed-path"),
 			viper.GetStringSlice("ignore-dirs"),
@@ -75,4 +79,15 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func printHeader() {
+	log.Printf("Disk Usage Prometheus Exporter %s	build date: %s	sha1: %s	Go: %s	GOOS: %s	GOARCH: %s",
+		build.BuildVersion,
+		build.BuildDate,
+		build.BuildCommitSha,
+		runtime.Version(),
+		runtime.GOOS,
+		runtime.GOARCH,
+	)
 }
