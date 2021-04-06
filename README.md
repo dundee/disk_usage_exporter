@@ -11,11 +11,11 @@ Usage:
 Flags:
   -t, --analyze-interval int   How often the path should be analyzed (in seconds, detaults to 5 minutes) (default 300)
   -p, --analyzed-path string   Path where to analyze disk usage (default "/")
-  -b, --bind-address string    Address to bind to (default "0.0.0.0:9108")
+  -b, --bind-address string    Address to bind to (default "0.0.0.0:9995")
   -c, --config string          config file (default is $HOME/.disk_usage_exporter.yaml)
-  -l, --dir-level int          Directory nesting level to show (0 = only selected dir) (default 1)
+  -l, --dir-level int          Directory nesting level to show (0 = only selected dir) (default 2)
   -h, --help                   help for disk_usage_exporter
-  -i, --ignore-dirs strings    Absolute paths to ignore (separated by comma) (default [/proc,/dev,/sys,/run])
+  -i, --ignore-dirs strings    Absolute paths to ignore (separated by comma) (default [/proc,/dev,/sys,/run,/var/cache/rsnapshot])
 ```
 
 ## Example output

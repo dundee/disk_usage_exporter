@@ -53,7 +53,7 @@ func init() {
 	flags.StringP("analyzed-path", "p", "/", "Path where to analyze disk usage")
 	flags.IntP("dir-level", "l", 2, "Directory nesting level to show (0 = only selected dir)")
 	flags.IntP("analyze-interval", "t", 300, "How often the path should be analyzed (in seconds, detaults to 5 minutes)")
-	flags.StringSliceP("ignore-dirs", "i", []string{"/proc", "/dev", "/sys", "/run"}, "Absolute paths to ignore (separated by comma)")
+	flags.StringSliceP("ignore-dirs", "i", []string{"/proc", "/dev", "/sys", "/run", "/var/cache/rsnapshot"}, "Absolute paths to ignore (separated by comma)")
 
 	viper.BindPFlags(flags)
 }
