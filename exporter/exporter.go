@@ -83,7 +83,7 @@ func RunServer(addr string) {
 	http.Handle("/", http.HandlerFunc(serveIndex))
 	http.Handle("/metrics", promhttp.Handler())
 
-	log.Printf("Listening on %s", addr)
+	log.Printf("Providing metrics at http://%s/metrics", addr)
 	err := http.ListenAndServe(addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
@@ -92,11 +92,22 @@ func RunServer(addr string) {
 
 func serveIndex(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-type", "text/html")
-	res := `<!DOCTYPE>
-<html>
+	res := `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Disk Usage Prometheus Exporter</title>
+</head>
 <body>
-<h1>go DiskUsage("Prometheus Exporter")</h1>
-<a href="/metrics">Metrics</a>
+<h1>Disk Usage Prometheus Exporter</h1>
+<p>
+	<a href="/metrics">Metrics</a>
+</p>
+<p>
+	<a href="https://github.com/dundee/disk_usage_exporter">Homepage</a>
+</p>
+</body>
 </html>
 `
 	fmt.Fprint(w, res)
