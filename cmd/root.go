@@ -30,6 +30,7 @@ and reporting which directories consume what space.`,
 			viper.GetString("analyzed-path"),
 			viper.GetStringSlice("ignore-dirs"),
 			viper.GetInt("dir-level"),
+			viper.GetInt("analyze-interval"),
 		)
 		exporter.RunServer(
 			viper.GetString("bind-address"),
@@ -51,6 +52,7 @@ func init() {
 	flags.StringP("bind-address", "b", "0.0.0.0:9995", "Address to bind to")
 	flags.StringP("analyzed-path", "p", "/", "Path where to analyze disk usage")
 	flags.IntP("dir-level", "l", 2, "Directory nesting level to show (0 = only selected dir)")
+	flags.IntP("analyze-interval", "t", 300, "How often the path should be analyzed (in seconds, detaults to 5 minutes)")
 	flags.StringSliceP("ignore-dirs", "i", []string{"/proc", "/dev", "/sys", "/run"}, "Absolute paths to ignore (separated by comma)")
 
 	viper.BindPFlags(flags)

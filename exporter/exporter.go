@@ -69,13 +69,13 @@ func (e *Exporter) ReportItem(item analyze.Item, level int) {
 	}
 }
 
-func RunAnalysis(path string, ignoreDirs []string, level int) {
+func RunAnalysis(path string, ignoreDirs []string, level int, interval int) {
 	exporter := NewExporter(level)
 	exporter.SetIgnoreDirPaths(ignoreDirs)
 
 	for {
 		exporter.Run(path)
-		time.Sleep(time.Minute * 1)
+		time.Sleep(time.Second * time.Duration(interval))
 	}
 }
 
