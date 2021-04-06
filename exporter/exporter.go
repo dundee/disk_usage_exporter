@@ -19,10 +19,18 @@ var (
 		},
 		[]string{"path"},
 	)
+	diskUsageLevel1 = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "node_disk_usage_level_1_bytes",
+			Help: "Disk usage of the directory/file level 1",
+		},
+		[]string{"path"},
+	)
 )
 
 func init() {
 	prometheus.MustRegister(diskUsage)
+	prometheus.MustRegister(diskUsageLevel1)
 }
 
 type Exporter struct {
@@ -60,6 +68,8 @@ func (e *Exporter) ShouldDirBeIgnored(path string) bool {
 func (e *Exporter) ReportItem(item analyze.Item, level int) {
 	if level == e.maxLevel {
 		diskUsage.WithLabelValues(item.GetPath()).Set(float64(item.GetUsage()))
+	} else if level == 1 {
+		diskUsageLevel1.WithLabelValues(item.GetPath()).Set(float64(item.GetUsage()))
 	}
 
 	if item.IsDir() && level+1 <= e.maxLevel {

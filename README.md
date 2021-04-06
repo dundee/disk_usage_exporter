@@ -39,6 +39,24 @@ node_disk_usage_bytes{path="/var/run"} 0
 node_disk_usage_bytes{path="/var/snap"} 1.11694848e+10
 node_disk_usage_bytes{path="/var/spool"} 16384
 node_disk_usage_bytes{path="/var/tmp"} 475136
+# HELP node_disk_usage_level_1_bytes Disk usage of the directory/file level 1
+# TYPE node_disk_usage_level_1_bytes gauge
+node_disk_usage_level_1_bytes{path="/bin"} 0
+node_disk_usage_level_1_bytes{path="/boot"} 1.29736704e+08
+node_disk_usage_level_1_bytes{path="/etc"} 1.3090816e+07
+node_disk_usage_level_1_bytes{path="/home"} 8.7081373696e+10
+node_disk_usage_level_1_bytes{path="/lib"} 0
+node_disk_usage_level_1_bytes{path="/lib64"} 0
+node_disk_usage_level_1_bytes{path="/lost+found"} 4096
+node_disk_usage_level_1_bytes{path="/mnt"} 4096
+node_disk_usage_level_1_bytes{path="/opt"} 2.979229696e+09
+node_disk_usage_level_1_bytes{path="/root"} 4096
+node_disk_usage_level_1_bytes{path="/sbin"} 0
+node_disk_usage_level_1_bytes{path="/snap"} 0
+node_disk_usage_level_1_bytes{path="/srv"} 4.988928e+06
+node_disk_usage_level_1_bytes{path="/tmp"} 1.3713408e+07
+node_disk_usage_level_1_bytes{path="/usr"} 1.8109427712e+10
+node_disk_usage_level_1_bytes{path="/var"} 2.5156793856e+10
 ```
 
 ## Example Prometheus queries
