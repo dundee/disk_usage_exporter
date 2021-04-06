@@ -53,11 +53,20 @@ sum(node_disk_usage_bytes{path=~"/var.*"})
 `~/.gdu-prometheus-exporter.yaml`:
 ```yaml
 analyzed-path: /
-bind-address: 0.0.0.0:9108
+bind-address: 0.0.0.0:9995
 dir-level: 2
 ignore-dirs:
 - /proc
 - /dev
 - /sys
 - /run
+```
+
+## Prometheus scrape config
+
+```yaml
+scrape_configs:
+  - job_name: 'disk-usage'
+    static_configs:
+    - targets: ['localhost:9995']
 ```
