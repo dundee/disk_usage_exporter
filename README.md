@@ -2,6 +2,10 @@
 
 Provides detailed info about disk usage of the selected filesystem path.
 
+## Demo Grafana dashboard
+
+http://milde.cz:3000/goto/Btc6hslGk
+
 ## Usage
 
 ```
