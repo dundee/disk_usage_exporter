@@ -8,7 +8,7 @@ LDFLAGS := -s -w -extldflags '-static' \
 	-X '$(PACKAGE)/build.BuildCommitSha=$(GIT_SHA)' \
 	-X '$(PACKAGE)/build.BuildDate=$(shell LC_ALL=en_US.UTF-8 date)'
 
-all: build-all man clean-uncompressed-dist shasums
+all: build-all clean-uncompressed-dist shasums
 
 run:
 	go run .
