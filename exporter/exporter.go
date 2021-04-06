@@ -14,10 +14,10 @@ import (
 var (
 	diskUsage = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "gdu_disk_usage",
-			Help: "Disk usage of the directory",
+			Name: "node_disk_usage_bytes",
+			Help: "Disk usage of the directory/file",
 		},
-		[]string{"directory", "level"},
+		[]string{"path"},
 	)
 )
 
@@ -58,7 +58,9 @@ func (e *Exporter) ShouldDirBeIgnored(path string) bool {
 }
 
 func (e *Exporter) ReportItem(item analyze.Item, level int) {
-	diskUsage.WithLabelValues(item.GetPath(), fmt.Sprint(level)).Set(float64(item.GetUsage()))
+	if level == e.maxLevel {
+		diskUsage.WithLabelValues(item.GetPath()).Set(float64(item.GetUsage()))
+	}
 
 	if item.IsDir() && level+1 <= e.maxLevel {
 		for _, entry := range item.(*analyze.Dir).Files {
