@@ -6,7 +6,8 @@ import (
 	"runtime"
 
 	"github.com/dundee/disk_usage_exporter/build"
-	exporter "github.com/dundee/disk_usage_exporter/exporter"
+	"github.com/dundee/disk_usage_exporter/exporter"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"

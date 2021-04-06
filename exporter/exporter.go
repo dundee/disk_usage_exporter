@@ -2,13 +2,13 @@ package exporter
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/dundee/gdu/v4/analyze"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
