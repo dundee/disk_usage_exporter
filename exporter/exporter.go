@@ -26,7 +26,6 @@ func init() {
 }
 
 type Exporter struct {
-	analyzer       analyze.Analyzer
 	ignoreDirPaths map[string]struct{}
 	maxLevel       int
 }
@@ -34,13 +33,14 @@ type Exporter struct {
 func NewExporter(maxLevel int) *Exporter {
 	return &Exporter{
 		maxLevel: maxLevel,
-		analyzer: analyze.CreateAnalyzer(),
 	}
 }
 
 func (e *Exporter) Run(path string) {
-	dir := e.analyzer.AnalyzeDir(path, e.ShouldDirBeIgnored)
+	analyzer := analyze.CreateAnalyzer()
+	dir := analyzer.AnalyzeDir(path, e.ShouldDirBeIgnored)
 	e.ReportItem(dir, 0)
+	log.Info("Analysis done")
 }
 
 // SetIgnoreDirPaths sets paths to ignore
