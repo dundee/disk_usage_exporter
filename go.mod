@@ -1,4 +1,4 @@
-module github.com/dundee/gdu-prometheus-exporter
+module github.com/dundee/disk_usage_exporter
 
 go 1.16
 

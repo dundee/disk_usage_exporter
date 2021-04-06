@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	exporter "github.com/dundee/gdu-prometheus-exporter/exporter"
+	exporter "github.com/dundee/disk_usage_exporter/exporter"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -16,7 +16,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "gdu-prometheus-exporter",
+	Use:   "disk_usage_exporter",
 	Short: "Prometheus exporter for detailed disk usage info",
 	Long: `Prometheus exporter analysing disk usage of the filesystem
 and reporting which directories consume what space.`,
@@ -42,7 +42,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	flags := rootCmd.PersistentFlags()
-	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.gdu-prometheus-exporter.yaml)")
+	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.disk_usage_exporter.yaml)")
 	flags.StringP("bind-address", "b", "0.0.0.0:9995", "Address to bind to")
 	flags.StringP("analyzed-path", "p", "/", "Path where to analyze disk usage")
 	flags.IntP("dir-level", "l", 2, "Directory nesting level to show (0 = only selected dir)")
@@ -64,9 +64,9 @@ func initConfig() {
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".gdu-prometheus-exporter" (without extension).
+		// Search config in home directory with name ".disk_usage_exporter" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".gdu-prometheus-exporter")
+		viper.SetConfigName(".disk_usage_exporter")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

@@ -6,14 +6,14 @@ Provides detailed info about disk usage of the selected filesystem path.
 
 ```
 Usage:
-  gdu-prometheus-exporter [flags]
+  disk_usage_exporter [flags]
 
 Flags:
   -p, --analyzed-path string   Path where to analyze disk usage (default "/")
   -b, --bind-address string    Address to bind to (default "0.0.0.0:9108")
-  -c, --config string          config file (default is $HOME/.gdu-prometheus-exporter.yaml)
+  -c, --config string          config file (default is $HOME/.disk_usage_exporter.yaml)
   -l, --dir-level int          Directory nesting level to show (0 = only selected dir) (default 1)
-  -h, --help                   help for gdu-prometheus-exporter
+  -h, --help                   help for disk_usage_exporter
   -i, --ignore-dirs strings    Absolute paths to ignore (separated by comma) (default [/proc,/dev,/sys,/run])
 ```
 
@@ -50,7 +50,7 @@ sum(node_disk_usage_bytes{path=~"/var.*"})
 
 ## Example config file
 
-`~/.gdu-prometheus-exporter.yaml`:
+`~/.disk_usage_exporter.yaml`:
 ```yaml
 analyzed-path: /
 bind-address: 0.0.0.0:9995
