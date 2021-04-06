@@ -31,15 +31,15 @@ type Exporter struct {
 	maxLevel       int
 }
 
-func NewExporter() *Exporter {
+func NewExporter(maxLevel int) *Exporter {
 	return &Exporter{
-		maxLevel: 1,
+		maxLevel: maxLevel,
 		analyzer: analyze.CreateAnalyzer(),
 	}
 }
 
-func (e *Exporter) Run() {
-	dir := e.analyzer.AnalyzeDir("/", e.ShouldDirBeIgnored)
+func (e *Exporter) Run(path string) {
+	dir := e.analyzer.AnalyzeDir(path, e.ShouldDirBeIgnored)
 	e.ReportItem(dir, 0)
 }
 
@@ -67,12 +67,12 @@ func (e *Exporter) ReportItem(item analyze.Item, level int) {
 	}
 }
 
-func RunAnalysis(ignoreDirs []string) {
-	exporter := NewExporter()
+func RunAnalysis(path string, ignoreDirs []string, level int) {
+	exporter := NewExporter(level)
 	exporter.SetIgnoreDirPaths(ignoreDirs)
 
 	for {
-		exporter.Run()
+		exporter.Run(path)
 		time.Sleep(time.Minute * 1)
 	}
 }

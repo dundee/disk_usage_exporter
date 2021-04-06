@@ -1,6 +1,23 @@
 # Disk Usage Prometheus Exporter
 
-Provides detailed info about disk usage of the selected filesystem.
+Provides detailed info about disk usage of the selected filesystem path.
+
+## Usage
+
+```
+Usage:
+  gdu-prometheus-exporter [flags]
+
+Flags:
+  -p, --analyzed-path string   Path where to analyze disk usage (default "/")
+  -b, --bind-address string    Address to bind to (default "0.0.0.0:9108")
+  -c, --config string          config file (default is $HOME/.gdu-prometheus-exporter.yaml)
+  -l, --dir-level int          Directory nesting level to show (0 = only selected dir) (default 1)
+  -h, --help                   help for gdu-prometheus-exporter
+  -i, --ignore-dirs strings    Absolute paths to ignore (separated by comma) (default [/proc,/dev,/sys,/run])
+```
+
+## Example output
 
 ```
 # HELP gdu_disk_usage Disk usage of the directory
@@ -22,4 +39,18 @@ gdu_disk_usage{directory="/srv",level="1"} 4.988928e+06
 gdu_disk_usage{directory="/tmp",level="1"} 1.3561856e+07
 gdu_disk_usage{directory="/usr",level="1"} 1.7940340736e+10
 gdu_disk_usage{directory="/var",level="1"} 2.506924032e+10
+```
+
+## Example config file
+
+`~/.gdu-prometheus-exporter.yaml`:
+```yaml
+analyzed-path: /
+bind-address: 0.0.0.0:9108
+dir-level: 1
+ignore-dirs:
+- /proc
+- /dev
+- /sys
+- /run
 ```

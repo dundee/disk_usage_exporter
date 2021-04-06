@@ -12,9 +12,7 @@ import (
 )
 
 var (
-	cfgFile    string
-	address    string
-	ignoreDirs []string
+	cfgFile string
 )
 
 var rootCmd = &cobra.Command{
@@ -23,8 +21,14 @@ var rootCmd = &cobra.Command{
 	Long: `Prometheus exporter analysing disk usage of the filesystem
 and reporting which directories consume what space.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		go exporter.RunAnalysis(ignoreDirs)
-		exporter.RunServer(address)
+		go exporter.RunAnalysis(
+			viper.GetString("analyzed-path"),
+			viper.GetStringSlice("ignore-dirs"),
+			viper.GetInt("dir-level"),
+		)
+		exporter.RunServer(
+			viper.GetString("bind-address"),
+		)
 	},
 }
 
@@ -37,9 +41,14 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gdu-prometheus-exporter.yaml)")
-	rootCmd.PersistentFlags().StringVarP(&address, "bind-address", "b", "0.0.0.0:9108", "Address to bind to")
-	rootCmd.PersistentFlags().StringSliceVarP(&ignoreDirs, "ignore-dirs", "i", []string{"/proc", "/dev", "/sys", "/run"}, "Absolute paths to ignore (separated by comma)")
+	flags := rootCmd.PersistentFlags()
+	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.gdu-prometheus-exporter.yaml)")
+	flags.StringP("bind-address", "b", "0.0.0.0:9108", "Address to bind to")
+	flags.StringP("analyzed-path", "p", "/", "Path where to analyze disk usage")
+	flags.IntP("dir-level", "l", 1, "Directory nesting level to show (0 = only selected dir)")
+	flags.StringSliceP("ignore-dirs", "i", []string{"/proc", "/dev", "/sys", "/run"}, "Absolute paths to ignore (separated by comma)")
+
+	viper.BindPFlags(flags)
 }
 
 // initConfig reads in config file and ENV variables if set.
