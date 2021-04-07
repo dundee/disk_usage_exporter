@@ -41,6 +41,15 @@ build-all:
 
 	cd dist; for file in disk_usage_exporter_linux_* disk_usage_exporter_darwin_* disk_usage_exporter_netbsd_* disk_usage_exporter_openbsd_* disk_usage_exporter_freebsd_*; do tar czf $$file.tgz $$file; done
 
+test:
+	go test -v ./...
+
+coverage:
+	go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+coverage-html: coverage
+	go tool cover -html=coverage.txt
+
 clean:
 	-rm -r dist
 
@@ -51,4 +60,4 @@ shasums:
 	cd dist; sha256sum * > sha256sums.txt
 	cd dist; gpg --sign --armor --detach-sign sha256sums.txt
 
-.PHONY: run build clean
+.PHONY: run build clean test coverage coverage-html

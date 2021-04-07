@@ -32,12 +32,14 @@ func init() {
 	prometheus.MustRegister(diskUsageLevel1)
 }
 
+// Exporter is the type to be used to start HTTP server and run the analysis
 type Exporter struct {
 	ignoreDirPaths map[string]struct{}
 	maxLevel       int
 	path           string
 }
 
+// NewExporter creates new Exporter
 func NewExporter(maxLevel int, path string) *Exporter {
 	return &Exporter{
 		maxLevel: maxLevel,
@@ -45,10 +47,10 @@ func NewExporter(maxLevel int, path string) *Exporter {
 	}
 }
 
-func (e *Exporter) RunAnalysis() {
+func (e *Exporter) runAnalysis() {
 	analyzer := analyze.CreateAnalyzer()
-	dir := analyzer.AnalyzeDir(e.path, e.ShouldDirBeIgnored)
-	e.ReportItem(dir, 0)
+	dir := analyzer.AnalyzeDir(e.path, e.shouldDirBeIgnored)
+	e.reportItem(dir, 0)
 	log.Info("Analysis done")
 }
 
@@ -60,13 +62,12 @@ func (e *Exporter) SetIgnoreDirPaths(paths []string) {
 	}
 }
 
-// ShouldDirBeIgnored returns true if given path should be ignored
-func (e *Exporter) ShouldDirBeIgnored(path string) bool {
+func (e *Exporter) shouldDirBeIgnored(path string) bool {
 	_, ok := e.ignoreDirPaths[path]
 	return ok
 }
 
-func (e *Exporter) ReportItem(item analyze.Item, level int) {
+func (e *Exporter) reportItem(item analyze.Item, level int) {
 	if level == e.maxLevel {
 		diskUsage.WithLabelValues(item.GetPath()).Set(float64(item.GetUsage()))
 	} else if level == 1 {
@@ -75,18 +76,19 @@ func (e *Exporter) ReportItem(item analyze.Item, level int) {
 
 	if item.IsDir() && level+1 <= e.maxLevel {
 		for _, entry := range item.(*analyze.Dir).Files {
-			e.ReportItem(entry, level+1)
+			e.reportItem(entry, level+1)
 		}
 	}
 }
 
 func (e *Exporter) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	e.RunAnalysis()
+	e.runAnalysis()
 	promhttp.Handler().ServeHTTP(w, req)
 }
 
+// RunServer starts HTTP server loop
 func (e *Exporter) RunServer(addr string) {
-	http.Handle("/", http.HandlerFunc(serveIndex))
+	http.Handle("/", http.HandlerFunc(ServeIndex))
 	http.Handle("/metrics", e)
 
 	log.Printf("Providing metrics at http://%s/metrics", addr)
@@ -96,7 +98,8 @@ func (e *Exporter) RunServer(addr string) {
 	}
 }
 
-func serveIndex(w http.ResponseWriter, req *http.Request) {
+// ServeIndex serves index page
+func ServeIndex(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-type", "text/html")
 	res := `<!DOCTYPE html>
 <html lang="en">
