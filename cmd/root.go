@@ -35,6 +35,7 @@ and reporting which directories consume what space.`,
 	},
 }
 
+// Execute runs the command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
