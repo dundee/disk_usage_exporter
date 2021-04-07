@@ -26,15 +26,12 @@ and reporting which directories consume what space.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		printHeader()
 
-		go exporter.RunAnalysis(
-			viper.GetString("analyzed-path"),
-			viper.GetStringSlice("ignore-dirs"),
+		e := exporter.NewExporter(
 			viper.GetInt("dir-level"),
-			viper.GetInt("analyze-interval"),
+			viper.GetString("analyzed-path"),
 		)
-		exporter.RunServer(
-			viper.GetString("bind-address"),
-		)
+		e.SetIgnoreDirPaths(viper.GetStringSlice("ignore-dirs"))
+		e.RunServer(viper.GetString("bind-address"))
 	},
 }
 
@@ -52,7 +49,6 @@ func init() {
 	flags.StringP("bind-address", "b", "0.0.0.0:9995", "Address to bind to")
 	flags.StringP("analyzed-path", "p", "/", "Path where to analyze disk usage")
 	flags.IntP("dir-level", "l", 2, "Directory nesting level to show (0 = only selected dir)")
-	flags.IntP("analyze-interval", "t", 300, "How often the path should be analyzed (in seconds, detaults to 5 minutes)")
 	flags.StringSliceP("ignore-dirs", "i", []string{"/proc", "/dev", "/sys", "/run", "/var/cache/rsnapshot"}, "Absolute paths to ignore (separated by comma)")
 
 	viper.BindPFlags(flags)

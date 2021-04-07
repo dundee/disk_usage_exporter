@@ -3,7 +3,6 @@ package exporter
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/dundee/gdu/v4/analyze"
 	"github.com/prometheus/client_golang/prometheus"
@@ -36,17 +35,19 @@ func init() {
 type Exporter struct {
 	ignoreDirPaths map[string]struct{}
 	maxLevel       int
+	path           string
 }
 
-func NewExporter(maxLevel int) *Exporter {
+func NewExporter(maxLevel int, path string) *Exporter {
 	return &Exporter{
 		maxLevel: maxLevel,
+		path:     path,
 	}
 }
 
-func (e *Exporter) Run(path string) {
+func (e *Exporter) RunAnalysis() {
 	analyzer := analyze.CreateAnalyzer()
-	dir := analyzer.AnalyzeDir(path, e.ShouldDirBeIgnored)
+	dir := analyzer.AnalyzeDir(e.path, e.ShouldDirBeIgnored)
 	e.ReportItem(dir, 0)
 	log.Info("Analysis done")
 }
@@ -79,19 +80,14 @@ func (e *Exporter) ReportItem(item analyze.Item, level int) {
 	}
 }
 
-func RunAnalysis(path string, ignoreDirs []string, level int, interval int) {
-	exporter := NewExporter(level)
-	exporter.SetIgnoreDirPaths(ignoreDirs)
-
-	for {
-		exporter.Run(path)
-		time.Sleep(time.Second * time.Duration(interval))
-	}
+func (e *Exporter) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	e.RunAnalysis()
+	promhttp.Handler().ServeHTTP(w, req)
 }
 
-func RunServer(addr string) {
+func (e *Exporter) RunServer(addr string) {
 	http.Handle("/", http.HandlerFunc(serveIndex))
-	http.Handle("/metrics", promhttp.Handler())
+	http.Handle("/metrics", e)
 
 	log.Printf("Providing metrics at http://%s/metrics", addr)
 	err := http.ListenAndServe(addr, nil)

@@ -13,7 +13,6 @@ Usage:
   disk_usage_exporter [flags]
 
 Flags:
-  -t, --analyze-interval int   How often the path should be analyzed (in seconds, detaults to 5 minutes) (default 300)
   -p, --analyzed-path string   Path where to analyze disk usage (default "/")
   -b, --bind-address string    Address to bind to (default "0.0.0.0:9995")
   -c, --config string          config file (default is $HOME/.disk_usage_exporter.yaml)
@@ -75,7 +74,6 @@ sum(node_disk_usage_bytes{path=~"/var.*"})
 
 `~/.disk_usage_exporter.yaml`:
 ```yaml
-analyze-interval: 300
 analyzed-path: /
 bind-address: 0.0.0.0:9995
 dir-level: 2
@@ -88,9 +86,14 @@ ignore-dirs:
 
 ## Prometheus scrape config
 
+Disk usage analysis can be resource heavy.
+Set the `scrape_interval` and `scrape_timeout` according to the size of analyzed path.
+
 ```yaml
 scrape_configs:
   - job_name: 'disk-usage'
+    scrape_interval: 5m
+    scrape_timeout: 20s
     static_configs:
     - targets: ['localhost:9995']
 ```
