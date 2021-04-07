@@ -1,5 +1,11 @@
 # Disk Usage Prometheus Exporter
 
+[![Build Status](https://travis-ci.com/dundee/disk_usage_exporter.svg?branch=master)](https://travis-ci.com/dundee/disk_usage_exporter)
+[![codecov](https://codecov.io/gh/dundee/disk_usage_exporter/branch/master/graph/badge.svg)](https://codecov.io/gh/dundee/disk_usage_exporter)
+[![Go Report Card](https://goreportcard.com/badge/github.com/dundee/disk_usage_exporter)](https://goreportcard.com/report/github.com/dundee/disk_usage_exporter)
+[![Maintainability](https://api.codeclimate.com/v1/badges/74d685f0c638e6109ab3/maintainability)](https://codeclimate.com/github/dundee/disk_usage_exporter/maintainability)
+[![CodeScene Code Health](https://codescene.io/projects/14689/status-badges/code-health)](https://codescene.io/projects/14689)
+
 Provides detailed info about disk usage of the selected filesystem path.
 
 ## Demo Grafana dashboard
