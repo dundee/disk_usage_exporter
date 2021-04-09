@@ -8,6 +8,8 @@
 
 Provides detailed info about disk usage of the selected filesystem path.
 
+Uses [gdu](https://github.com/dundee/gdu) under the hood for the disk usage analysis.
+
 ## Demo Grafana dashboard
 
 http://milde.cz:3000/goto/Btc6hslGk
