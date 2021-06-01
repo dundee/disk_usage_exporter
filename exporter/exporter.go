@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/dundee/gdu/v4/analyze"
+	"github.com/dundee/gdu/v5/pkg/analyze"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
@@ -63,7 +63,7 @@ func (e *Exporter) SetIgnoreDirPaths(paths []string) {
 	}
 }
 
-func (e *Exporter) shouldDirBeIgnored(path string) bool {
+func (e *Exporter) shouldDirBeIgnored(name, path string) bool {
 	_, ok := e.ignoreDirPaths[path]
 	return ok
 }
