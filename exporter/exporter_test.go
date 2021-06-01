@@ -21,6 +21,7 @@ func TestRunAnalysis(t *testing.T) {
 		Header: make(http.Header),
 	})
 
+	assert.NotContains(t, string(w.buff), "test_dir/test_dir")
 	assert.Contains(t, string(w.buff), "node_disk_usage_bytes")
 }
 

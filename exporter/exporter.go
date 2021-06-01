@@ -3,6 +3,7 @@ package exporter
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
 
 	"github.com/dundee/gdu/v4/analyze"
 	"github.com/prometheus/client_golang/prometheus"
@@ -43,7 +44,7 @@ type Exporter struct {
 func NewExporter(maxLevel int, path string) *Exporter {
 	return &Exporter{
 		maxLevel: maxLevel,
-		path:     path,
+		path:     filepath.Clean(path),
 	}
 }
 
