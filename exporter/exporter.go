@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/dundee/gdu/v5/pkg/analyze"
+	"github.com/dundee/gdu/v5/pkg/fs"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
@@ -50,7 +51,8 @@ func NewExporter(maxLevel int, path string) *Exporter {
 
 func (e *Exporter) runAnalysis() {
 	analyzer := analyze.CreateAnalyzer()
-	dir := analyzer.AnalyzeDir(e.path, e.shouldDirBeIgnored)
+	dir := analyzer.AnalyzeDir(e.path, e.shouldDirBeIgnored, false)
+	dir.UpdateStats(fs.HardLinkedItems{})
 	e.reportItem(dir, 0)
 	log.Info("Analysis done")
 }
@@ -68,7 +70,7 @@ func (e *Exporter) shouldDirBeIgnored(name, path string) bool {
 	return ok
 }
 
-func (e *Exporter) reportItem(item analyze.Item, level int) {
+func (e *Exporter) reportItem(item fs.Item, level int) {
 	if level == e.maxLevel {
 		diskUsage.WithLabelValues(item.GetPath()).Set(float64(item.GetUsage()))
 	} else if level == 1 {
@@ -76,7 +78,7 @@ func (e *Exporter) reportItem(item analyze.Item, level int) {
 	}
 
 	if item.IsDir() && level+1 <= e.maxLevel {
-		for _, entry := range item.(*analyze.Dir).Files {
+		for _, entry := range item.GetFiles() {
 			e.reportItem(entry, level+1)
 		}
 	}
