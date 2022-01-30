@@ -105,3 +105,22 @@ scrape_configs:
     static_configs:
     - targets: ['localhost:9995']
 ```
+
+## Example systemd unit file
+
+```
+[Unit]
+Description=Prometheus disk usage exporter
+Documentation=https://github.com/dundee/disk_usage_exporter
+
+[Service]
+Restart=always
+User=prometheus
+ExecStart=/usr/bin/disk_usage_exporter $ARGS
+ExecReload=/bin/kill -HUP $MAINPID
+TimeoutStopSec=20s
+SendSIGKILL=no
+
+[Install]
+WantedBy=multi-user.target
+```
