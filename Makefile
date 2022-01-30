@@ -60,4 +60,7 @@ shasums:
 	cd dist; sha256sum * > sha256sums.txt
 	cd dist; gpg --sign --armor --detach-sign sha256sums.txt
 
+release:
+	gh release create -t "$(VERSION)" $(VERSION) ./dist/*
+
 .PHONY: run build clean test coverage coverage-html
