@@ -12,7 +12,7 @@ Uses [gdu](https://github.com/dundee/gdu) under the hood for the disk usage anal
 
 ## Demo Grafana dashboard
 
-http://master.milde.cz:3000/goto/PpNtVUb7z?orgId=1
+https://grafana.milde.cz/d/0TfJhs_Mz/disk-usage (credentials: grafana / gdu)
 
 ## Usage
 
