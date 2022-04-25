@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"runtime/debug"
 
 	"github.com/dundee/gdu/v5/pkg/analyze"
 	"github.com/dundee/gdu/v5/pkg/fs"
@@ -50,6 +51,7 @@ func NewExporter(maxLevel int, path string) *Exporter {
 }
 
 func (e *Exporter) runAnalysis() {
+	defer debug.FreeOSMemory()
 	analyzer := analyze.CreateAnalyzer()
 	dir := analyzer.AnalyzeDir(e.path, e.shouldDirBeIgnored, false)
 	dir.UpdateStats(fs.HardLinkedItems{})
