@@ -86,6 +86,20 @@ func (e *Exporter) reportItem(item fs.Item, level int) {
 	}
 }
 
+func (e *Exporter) WriteToTextfile(name string) {
+	e.runAnalysis()
+
+	// Use a custom registry to drop go stats
+	registry := prometheus.NewRegistry()
+	registry.MustRegister(collectors...)
+
+	err := prometheus.WriteToTextfile(name, registry)
+	if err != nil {
+		log.Fatalf("WriteToTextfile error: %v", err)
+	}
+	log.Printf("Stored stats in file %s", name)
+}
+
 func (e *Exporter) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	e.runAnalysis()
 	promhttp.Handler().ServeHTTP(w, req)

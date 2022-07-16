@@ -31,7 +31,13 @@ and reporting which directories consume what space.`,
 			viper.GetString("analyzed-path"),
 		)
 		e.SetIgnoreDirPaths(viper.GetStringSlice("ignore-dirs"))
-		e.RunServer(viper.GetString("bind-address"))
+
+		if viper.GetString("mode") == "file" {
+			e.WriteToTextfile(viper.GetString("output-file"))
+			log.Info("Done - exiting.")
+		} else {
+			e.RunServer(viper.GetString("bind-address"))
+		}
 	},
 }
 
