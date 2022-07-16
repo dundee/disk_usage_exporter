@@ -28,11 +28,11 @@ var (
 		},
 		[]string{"path"},
 	)
+	collectors = []prometheus.Collector{diskUsage, diskUsageLevel1}
 )
 
 func init() {
-	prometheus.MustRegister(diskUsage)
-	prometheus.MustRegister(diskUsageLevel1)
+	prometheus.MustRegister(collectors...)
 }
 
 // Exporter is the type to be used to start HTTP server and run the analysis
