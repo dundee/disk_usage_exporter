@@ -121,6 +121,15 @@ scrape_configs:
     - targets: ['localhost:9995']
 ```
 
+## Dump to file
+
+The official `node-exporter` allows to specify a folder which contains additional metric files through a [textfile collection mechanism](https://github.com/prometheus/node_exporter#textfile-collector).
+In order to make use of this, one has to set up `node-exporter` according to the documentation and set the `output-file`
+of this exporter to any name ending in `.prom` within said folder (and of course also `mode` to `file`).
+
+A common use case for this is when the calculation of metrics takes particularly long and therefore can only be done
+once in a while. To automate the periodic update of the output file, simply set up a cronjob.
+
 ## Example systemd unit file
 
 ```
@@ -139,9 +148,3 @@ SendSIGKILL=no
 [Install]
 WantedBy=multi-user.target
 ```
-
-### Scheduled Analysis
-
-In case you use mode `file` to dump all metrics into a `.prom` file, a crontab may be utilized to update the stats once in a while.
-Pointing `output-file` to a folder which is included in node-exporter's output is an alternative to the included webserver. 
-A common use case for this is when the calculation of metrics takes particularly long and therefore can only be done once once in a while.
