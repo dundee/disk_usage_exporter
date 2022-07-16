@@ -26,6 +26,8 @@ Flags:
   -c, --config string          config file (default is $HOME/.disk_usage_exporter.yaml)
   -l, --dir-level int          Directory nesting level to show (0 = only selected dir) (default 2)
   -h, --help                   help for disk_usage_exporter
+  -m, --mode string            Exposition method - either 'file' or 'http' (default "http")
+  -f, --output-file string     Target file to store metrics in (default "./disk-usage-exporter.prom")
   -i, --ignore-dirs strings    Absolute paths to ignore (separated by comma) (default [/proc,/dev,/sys,/run,/var/cache/rsnapshot])
 ```
 
@@ -78,12 +80,25 @@ Disk usage of `/var` directory:
 sum(node_disk_usage_bytes{path=~"/var.*"})
 ```
 
-## Example config file
+## Example config files
 
 `~/.disk_usage_exporter.yaml`:
 ```yaml
 analyzed-path: /
 bind-address: 0.0.0.0:9995
+dir-level: 2
+ignore-dirs:
+- /proc
+- /dev
+- /sys
+- /run
+```
+
+`~/.disk_usage_exporter.yaml`:
+```yaml
+analyzed-path: /
+mode: file
+output-file: ./disk-usage-exporter.prom
 dir-level: 2
 ignore-dirs:
 - /proc
@@ -124,3 +139,9 @@ SendSIGKILL=no
 [Install]
 WantedBy=multi-user.target
 ```
+
+### Scheduled Analysis
+
+In case you use mode `file` to dump all metrics into a `.prom` file, a crontab may be utilized to update the stats once in a while.
+Pointing `output-file` to a folder which is included in node-exporter's output is an alternative to the included webserver. 
+A common use case for this is when the calculation of metrics takes particularly long and therefore can only be done once once in a while.
