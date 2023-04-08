@@ -25,10 +25,11 @@ Flags:
   -b, --bind-address string    Address to bind to (default "0.0.0.0:9995")
   -c, --config string          config file (default is $HOME/.disk_usage_exporter.yaml)
   -l, --dir-level int          Directory nesting level to show (0 = only selected dir) (default 2)
+  -L, --follow-symlinks        Follow symlinks for files, i.e. show the size of the file to which symlink points to (symlinks to directories are not followed)
   -h, --help                   help for disk_usage_exporter
+  -i, --ignore-dirs strings    Absolute paths to ignore (separated by comma) (default [/proc,/dev,/sys,/run,/var/cache/rsnapshot])
   -m, --mode string            Exposition method - either 'file' or 'http' (default "http")
   -f, --output-file string     Target file to store metrics in (default "./disk-usage-exporter.prom")
-  -i, --ignore-dirs strings    Absolute paths to ignore (separated by comma) (default [/proc,/dev,/sys,/run,/var/cache/rsnapshot])
 ```
 
 ## Example output
