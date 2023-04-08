@@ -40,19 +40,22 @@ type Exporter struct {
 	ignoreDirPaths map[string]struct{}
 	maxLevel       int
 	path           string
+	followSymlinks bool
 }
 
 // NewExporter creates new Exporter
-func NewExporter(maxLevel int, path string) *Exporter {
+func NewExporter(maxLevel int, path string, followSymlinks bool) *Exporter {
 	return &Exporter{
-		maxLevel: maxLevel,
-		path:     filepath.Clean(path),
+		maxLevel:       maxLevel,
+		path:           filepath.Clean(path),
+		followSymlinks: followSymlinks,
 	}
 }
 
 func (e *Exporter) runAnalysis() {
 	defer debug.FreeOSMemory()
 	analyzer := analyze.CreateAnalyzer()
+	analyzer.SetFollowSymlinks(e.followSymlinks)
 	dir := analyzer.AnalyzeDir(e.path, e.shouldDirBeIgnored, false)
 	dir.UpdateStats(fs.HardLinkedItems{})
 	e.reportItem(dir, 0)

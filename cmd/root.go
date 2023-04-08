@@ -29,6 +29,7 @@ and reporting which directories consume what space.`,
 		e := exporter.NewExporter(
 			viper.GetInt("dir-level"),
 			viper.GetString("analyzed-path"),
+			viper.GetBool("follow-symlinks"),
 		)
 		e.SetIgnoreDirPaths(viper.GetStringSlice("ignore-dirs"))
 
@@ -59,6 +60,10 @@ func init() {
 	flags.StringP("analyzed-path", "p", "/", "Path where to analyze disk usage")
 	flags.IntP("dir-level", "l", 2, "Directory nesting level to show (0 = only selected dir)")
 	flags.StringSliceP("ignore-dirs", "i", []string{"/proc", "/dev", "/sys", "/run", "/var/cache/rsnapshot"}, "Absolute paths to ignore (separated by comma)")
+	flags.BoolP(
+		"follow-symlinks", "L", false,
+		"Follow symlinks for files, i.e. show the size of the file to which symlink points to (symlinks to directories are not followed)",
+	)
 
 	viper.BindPFlags(flags)
 }
