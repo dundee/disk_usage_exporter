@@ -15,7 +15,8 @@ func TestRunAnalysis(t *testing.T) {
 
 	w := &mockedResponseWriter{}
 
-	e := exporter.NewExporter(2, "test_dir", false)
+	paths := map[string]int{"test_dir": 2}
+	e := exporter.NewExporter(paths, false)
 	e.SetIgnoreDirPaths([]string{"/proc"})
 	e.ServeHTTP(w, &http.Request{
 		Header: make(http.Header),
