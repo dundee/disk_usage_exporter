@@ -21,15 +21,23 @@ Usage:
   disk_usage_exporter [flags]
 
 Flags:
-  -p, --analyzed-path string   Path where to analyze disk usage (default "/")
-  -b, --bind-address string    Address to bind to (default "0.0.0.0:9995")
-  -c, --config string          config file (default is $HOME/.disk_usage_exporter.yaml)
-  -l, --dir-level int          Directory nesting level to show (0 = only selected dir) (default 2)
-  -L, --follow-symlinks        Follow symlinks for files, i.e. show the size of the file to which symlink points to (symlinks to directories are not followed)
-  -h, --help                   help for disk_usage_exporter
-  -i, --ignore-dirs strings    Absolute paths to ignore (separated by comma) (default [/proc,/dev,/sys,/run,/var/cache/rsnapshot])
-  -m, --mode string            Exposition method - either 'file' or 'http' (default "http")
-  -f, --output-file string     Target file to store metrics in (default "./disk-usage-exporter.prom")
+  -p, --analyzed-path string         Path where to analyze disk usage (default "/")
+  -b, --bind-address string          Address to bind to (default "0.0.0.0:9995")
+  -c, --config string                config file (default is $HOME/.disk_usage_exporter.yaml)
+  -l, --dir-level int                Directory nesting level to show (0 = only selected dir) (default 2)
+  -L, --follow-symlinks              Follow symlinks for files, i.e. show the size of the file to which symlink points to (symlinks to directories are not followed)
+  -h, --help                         help for disk_usage_exporter
+  -i, --ignore-dirs strings          Absolute paths to ignore (separated by comma) (default [/proc,/dev,/sys,/run,/var/cache/rsnapshot])
+  -m, --mode string                  Expose method - either 'file' or 'http' (default "http")
+      --multi-paths stringToString   Multiple paths where to analyze disk usage, in format /path1=level1,/path2=level2,... (default [])
+  -f, --output-file string           Target file to store metrics in (default "./disk-usage-exporter.prom")
+```
+
+Either one path can be specified using `--analyzed-path` and `--dir-level` flags or multiple can be set
+using `--multi-paths` flag:
+
+```bash
+disk_usage_exporter --multi-paths=/home=2,/var=3
 ```
 
 ## Example output
@@ -100,6 +108,21 @@ ignore-dirs:
 analyzed-path: /
 mode: file
 output-file: ./disk-usage-exporter.prom
+dir-level: 2
+ignore-dirs:
+- /proc
+- /dev
+- /sys
+- /run
+```
+
+`~/.disk_usage_exporter.yaml`:
+```yaml
+multi-paths:
+  /home: 2
+  /var: 3
+  /tmp: 1
+bind-address: 0.0.0.0:9995
 dir-level: 2
 ignore-dirs:
 - /proc
