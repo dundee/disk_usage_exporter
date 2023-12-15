@@ -3,7 +3,6 @@ package exporter
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
 	"runtime/debug"
 
 	"github.com/dundee/gdu/v5/pkg/analyze"
@@ -37,28 +36,30 @@ func init() {
 
 // Exporter is the type to be used to start HTTP server and run the analysis
 type Exporter struct {
+	paths          map[string]int
 	ignoreDirPaths map[string]struct{}
-	maxLevel       int
-	path           string
 	followSymlinks bool
 }
 
 // NewExporter creates new Exporter
-func NewExporter(maxLevel int, path string, followSymlinks bool) *Exporter {
+func NewExporter(paths map[string]int, followSymlinks bool) *Exporter {
 	return &Exporter{
-		maxLevel:       maxLevel,
-		path:           filepath.Clean(path),
 		followSymlinks: followSymlinks,
+		paths:          paths,
 	}
 }
 
 func (e *Exporter) runAnalysis() {
 	defer debug.FreeOSMemory()
-	analyzer := analyze.CreateAnalyzer()
-	analyzer.SetFollowSymlinks(e.followSymlinks)
-	dir := analyzer.AnalyzeDir(e.path, e.shouldDirBeIgnored, false)
-	dir.UpdateStats(fs.HardLinkedItems{})
-	e.reportItem(dir, 0)
+
+	for path, level := range e.paths {
+		analyzer := analyze.CreateAnalyzer()
+		analyzer.SetFollowSymlinks(e.followSymlinks)
+		dir := analyzer.AnalyzeDir(path, e.shouldDirBeIgnored, false)
+		dir.UpdateStats(fs.HardLinkedItems{})
+		e.reportItem(dir, 0, level)
+	}
+
 	log.Info("Analysis done")
 }
 
@@ -75,16 +76,16 @@ func (e *Exporter) shouldDirBeIgnored(name, path string) bool {
 	return ok
 }
 
-func (e *Exporter) reportItem(item fs.Item, level int) {
-	if level == e.maxLevel {
+func (e *Exporter) reportItem(item fs.Item, level, maxLevel int) {
+	if level == maxLevel {
 		diskUsage.WithLabelValues(item.GetPath()).Set(float64(item.GetUsage()))
 	} else if level == 1 {
 		diskUsageLevel1.WithLabelValues(item.GetPath()).Set(float64(item.GetUsage()))
 	}
 
-	if item.IsDir() && level+1 <= e.maxLevel {
+	if item.IsDir() && level+1 <= maxLevel {
 		for _, entry := range item.GetFiles() {
-			e.reportItem(entry, level+1)
+			e.reportItem(entry, level+1, maxLevel)
 		}
 	}
 }
