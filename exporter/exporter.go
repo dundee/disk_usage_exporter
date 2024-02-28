@@ -10,6 +10,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -39,6 +40,7 @@ type Exporter struct {
 	paths          map[string]int
 	ignoreDirPaths map[string]struct{}
 	followSymlinks bool
+	basicAuth      map[string]string
 }
 
 // NewExporter creates new Exporter
@@ -71,7 +73,12 @@ func (e *Exporter) SetIgnoreDirPaths(paths []string) {
 	}
 }
 
-func (e *Exporter) shouldDirBeIgnored(name, path string) bool {
+// SetBasicAuth sets Basic Auth credentials
+func (e *Exporter) SetBasicAuth(users map[string]string) {
+	e.basicAuth = users
+}
+
+func (e *Exporter) shouldDirBeIgnored(_, path string) bool {
 	_, ok := e.ignoreDirPaths[path]
 	return ok
 }
@@ -90,6 +97,7 @@ func (e *Exporter) reportItem(item fs.Item, level, maxLevel int) {
 	}
 }
 
+// WriteToTextfile writes the prometheus report to file
 func (e *Exporter) WriteToTextfile(name string) {
 	e.runAnalysis()
 
@@ -105,8 +113,30 @@ func (e *Exporter) WriteToTextfile(name string) {
 }
 
 func (e *Exporter) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	if len(e.basicAuth) > 0 {
+		if ok := e.authorizeReq(w, req); !ok {
+			return
+		}
+	}
+
 	e.runAnalysis()
 	promhttp.Handler().ServeHTTP(w, req)
+}
+
+func (e *Exporter) authorizeReq(w http.ResponseWriter, req *http.Request) bool {
+	user, pass, ok := req.BasicAuth()
+	if ok {
+		if hashed, found := e.basicAuth[user]; found {
+			err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(pass))
+			if err == nil {
+				return true
+			}
+		}
+	}
+
+	w.Header().Add("WWW-Authenticate", "Basic realm=\"Access to disk usage exporter\"")
+	w.WriteHeader(401)
+	return false
 }
 
 // RunServer starts HTTP server loop

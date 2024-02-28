@@ -39,6 +39,10 @@ and reporting which directories consume what space.`,
 		)
 		e.SetIgnoreDirPaths(viper.GetStringSlice("ignore-dirs"))
 
+		if viper.IsSet("basic-auth-users") {
+			e.SetBasicAuth(viper.GetStringMapString("basic-auth-users"))
+		}
+
 		if viper.GetString("mode") == "file" {
 			e.WriteToTextfile(viper.GetString("output-file"))
 			log.Info("Done - exiting.")
@@ -71,6 +75,7 @@ func init() {
 		"Follow symlinks for files, i.e. show the size of the file to which symlink points to (symlinks to directories are not followed)",
 	)
 	flags.StringToString("multi-paths", map[string]string{}, "Multiple paths where to analyze disk usage, in format /path1=level1,/path2=level2,...")
+	flags.StringToString("basic-auth-users", map[string]string{}, "Basic Auth users and their passwords as bcypt hashes")
 
 	viper.BindPFlags(flags)
 }
