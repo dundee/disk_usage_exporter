@@ -23,7 +23,7 @@ build-all:
 	-mkdir dist
 	-CGO_ENABLED=0 gox \
 		-os="darwin" \
-		-arch="amd64" \
+		-arch="amd64 arm64" \
 		-output="dist/disk_usage_exporter_{{.OS}}_{{.Arch}}" \
 		-ldflags="$(LDFLAGS)"
 
@@ -32,11 +32,10 @@ build-all:
 		-output="dist/disk_usage_exporter_{{.OS}}_{{.Arch}}" \
 		-ldflags="$(LDFLAGS)"
 
-	cd dist; GOFLAGS="$(GOFLAGS)" CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -o disk_usage_exporter_linux_amd64 ..
-
 	cd dist; CGO_ENABLED=0 GOOS=linux GOARM=5 GOARCH=arm go build -ldflags="$(LDFLAGS)" -o disk_usage_exporter_linux_armv5l ..
 	cd dist; CGO_ENABLED=0 GOOS=linux GOARM=6 GOARCH=arm go build -ldflags="$(LDFLAGS)" -o disk_usage_exporter_linux_armv6l ..
 	cd dist; CGO_ENABLED=0 GOOS=linux GOARM=7 GOARCH=arm go build -ldflags="$(LDFLAGS)" -o disk_usage_exporter_linux_armv7l ..
+	cd dist; GOFLAGS="$(GOFLAGS)" CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$(LDFLAGS)" -o disk_usage_exporter_linux_amd64 ..
 	cd dist; CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="$(LDFLAGS)" -o disk_usage_exporter_linux_arm64 ..
 
 	cd dist; for file in disk_usage_exporter_linux_* disk_usage_exporter_darwin_* disk_usage_exporter_netbsd_* disk_usage_exporter_openbsd_* disk_usage_exporter_freebsd_*; do tar czf $$file.tgz $$file; done
