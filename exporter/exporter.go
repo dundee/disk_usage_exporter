@@ -55,9 +55,19 @@ func (e *Exporter) runAnalysis() {
 	defer debug.FreeOSMemory()
 
 	for path, level := range e.paths {
-		analyzer := analyze.CreateAnalyzer()
-		analyzer.SetFollowSymlinks(e.followSymlinks)
-		dir := analyzer.AnalyzeDir(path, e.shouldDirBeIgnored, false)
+		var dir fs.Item
+
+		if level == 1 {
+			log.Printf("Using top dir analyzer for path: %s", path)
+			analyzer := analyze.CreateTopDirAnalyzer()
+			analyzer.SetFollowSymlinks(e.followSymlinks)
+			dir = analyzer.AnalyzeDir(path, e.shouldDirBeIgnored, nil)
+		} else {
+			analyzer := analyze.CreateAnalyzer()
+			analyzer.SetFollowSymlinks(e.followSymlinks)
+			dir = analyzer.AnalyzeDir(path, e.shouldDirBeIgnored, nil)
+
+		}
 		dir.UpdateStats(fs.HardLinkedItems{})
 		e.reportItem(dir, 0, level)
 	}
@@ -90,8 +100,8 @@ func (e *Exporter) reportItem(item fs.Item, level, maxLevel int) {
 		diskUsageLevel1.WithLabelValues(item.GetPath()).Set(float64(item.GetUsage()))
 	}
 
-	if item.IsDir() && level+1 <= maxLevel {
-		for _, entry := range item.GetFiles() {
+	if level+1 <= maxLevel && item.IsDir() {
+		for entry := range item.GetFiles(fs.SortBySize, fs.SortDesc) {
 			e.reportItem(entry, level+1, maxLevel)
 		}
 	}
